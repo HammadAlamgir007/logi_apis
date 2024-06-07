@@ -8,7 +8,6 @@ app.get('/', (req, res) => res.send('Hello World!'));
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
 mongoose.connect("mongodb+srv://hammadalamgir778:hammad778@cluster0.kotj8fj.mongodb.net/userapp?retryWrites=true&w=majority&appName=Cluster0")
-
 // Define the User schema and model
 const userSchema = new mongoose.Schema({
   name: String,
@@ -49,4 +48,19 @@ app.post('/login', async function (req, res) {
   }
 
   res.json({ "msg": "Login successful" });
+});
+
+// New endpoint to update the password
+app.patch('/update-password', async function (req, res) {
+  const { username, newPassword } = req.body;
+
+  const user = await User.findOne({ username: username });
+  if (!user) {
+    return res.status(400).send("User not found");
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  res.json({ "msg": "Password updated successfully" });
 });
